@@ -1,0 +1,27 @@
+#!/bin/bash
+# Author: Sarah Barron
+# Module: Computer Systems and Networks
+# Assignment-1: Linux Shell Scripting 
+
+# Description: AddBizz
+# A script which updates the address book file with details of a 
+# new business. The script takes 5 command line arguments. 
+# The company Name and Email address are required the rest of the arguments can be null.
+
+# Check for a duplicate company
+./FindBiz dupl "$5" "$1" "$2"
+
+# if the check for a duplicate returns true exit without saving the contact, otherwise append the contact to CompanyDetails.txt
+if [ $? -eq 0 ]
+then
+	exit 1
+else
+	echo $1'|'$2'|'$3'|'$4'|'$5 >> CompanyDetails.txt
+	echo "-----------------------------------------------------------------------------------------------------------"
+	echo
+	echo "Company Details Added: "
+	echo "$1, $2, $3, $4, $5"
+	exit 0
+fi
+
+

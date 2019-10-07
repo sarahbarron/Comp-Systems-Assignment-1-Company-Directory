@@ -1,0 +1,88 @@
+#!/bin/bash
+
+# Author: Sarah Barron
+# Module: Computer Systems and Networks
+# Assignment-1: Linux Shell Scripting
+
+# Description: FindBiz
+# A script which will allow the user to search for an existing business based
+# upon any of the businesses information
+
+# Check there are search arguments in the command 
+if [ $# > 1 ]
+then
+	echo "-----------------------------------------------------------------------------------------------------------"
+
+	# The 1st argument is either find (for the search command) or dupl (for checking if the contact is a duplicate)
+	# If the 1st argument is find do the following
+	if [ "$1" == "find" ]
+	then
+		# Create a string command using a while loop to loop through arguments
+		# The string will be made up of a command that searches for the first argument in
+		# the CompanyDetails.txt file, if there are more than 1 search arguments
+		# The initial results are piped into another grep search for the next argument
+		# and so on until the final argument is searched for. This filters/narrows the
+		# results down to the contact that matches all command line arguments
+		# even if the order of arguments is different to the order of the contact details in the 
+		# CompanyDetails.txt file
+		FindCommand="grep --color=always -i \"$2\" CompanyDetails.txt | uniq"
+		num=3
+		while [ $num -le $# ]
+		do
+			FindCommand="$FindCommand | grep --color=always -i \"${!num}\""
+			num=`expr $num + 1`
+		done
+		
+		# eval is a built in command that takes a string as its argument and runs the command stored in
+		# the argument
+		# ref: https://stackoverflow.com/questions/2355148/run-a-string-as-a-command-within-a-bash-script
+		eval "$FindCommand" | sed 's/|/, /g'
+
+		# count the number of matches
+		TotalMatch=`eval "$FindCommand | wc -l"`
+
+		# If there were no matched lines print a message to say this and exit
+		if [ $TotalMatch -eq 0 ]
+		then
+			SearchFor=$(echo "$*" | sed 's/^.....//')
+			echo
+			echo "$SearchFor : could not be found in the Company Directory"
+			echo
+			exit 1
+		fi
+		exit 0
+
+	# If the 1st argument is dupl check for duplicate contacts
+	# A Company can only have unique email addresses stored in it
+	# An email address can be stored in many companies as the contact person might work for more than one company
+	elif [ "$1" == "dupl" ]
+	then
+		# Check the CompanyDetails.txt file for a match of 
+                # the 2nd argument (email address) starting with a | symbol and located at the end of the line
+                # pipe any matches to then check for a match of the third argument (company name
+		# to be located at the start of the line follwed by a | symbol
+                DupContact=$(grep -i "|$2$" CompanyDetails.txt| uniq | grep -i "^$3|")
+
+                # count the number of matches
+                DupNumOfMatches=$(grep -i "|$2$" CompanyDetails.txt| uniq | grep -i "^$3|" | wc -l)
+
+                # if there are no matches exit with a false exit status 1
+                # otherwise tell the user there is a contact already stored for this company with the same email address
+                if [ $DupNumOfMatches -eq 0 ]
+                then
+                	exit 1
+                else
+                        echo
+                        echo "DUPLICATE Contacts are not allowed"
+                        echo
+                        echo "The following contact is already stored for this company with the same email address as the one provided"
+			echo
+			echo '***' `echo $DupContact | sed 's/|/, /g'` '***' 
+                        echo 
+                        echo "If you do want to add this new contact please remove the stored contact first and try again"
+                        exit 0
+		fi
+	# end if 1st arg = dupl
+	fi
+# end if num of args is greater than 2
+fi

@@ -1,0 +1,188 @@
+#!/bin/bash
+# Author: Sarah Barron
+# Module: Computer Systems and Networks
+# Assignment-1: Linux Shell Scripting
+ 
+# Description: Menu
+# This script presents the user with a command line menu. 
+# This menu allows the user to select if they want to add a business
+# remove a business, find a business or email any company or all companies
+# listed on the address book.
+
+echo "==========================================================================================================="
+echo "                             COMPANY DIRECTORY MENU                                                        "
+echo "==========================================================================================================="
+# Array of string options for the menu
+options=('Add a new Customer' 'Remove an existing Customer' 'Search for a Customer' 'E-mail a Customer' 'Quit')
+# Prompt to user looking for a valid menu number
+PS3=$'\n----------------------------------------------------------------------------------------------------------- \nEnter A Menu Number (or enter any other key to view the menu again): '
+# prints each menu command on one column instead of rows using a column width of 27
+# Ref: unix.stackexchange.com/questions/293604/bash-how-to-make-each-menu-selections-in-1-line-instead-of-multiple-selections
+COLUMNS=27
+
+# The Pattern a valid email might be:
+# Start of email could be at least 1 or more letters, numbers and some symbols
+# followed by an @ symbol
+# followed by 1 or more letters numbers or some symbols
+# followed by a dot symbol
+# follwed by 1-6 letter at the end of the email
+EmailPattern="^[A-Za-Z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,6}$"
+PhonePattern="^\+?[0-9]*$"
+# Select the name in the options array
+# ref: linuxhint.com/bash_select_command/ 
+# helped with printing string menu options using an array
+select name in "${options[@]}"
+do
+case $name in
+
+# If the user enters 1 to Add a customer the AddBiz script is run
+# AddBiz allows the user to add a new customer with business name
+# Name, Address, phone number and email address
+"Add a new Customer")
+	echo
+	printf "Enter Company Name: "
+	read CompName
+	echo
+	while [ -z "$CompName" ]
+	do
+		echo "!! A Company Name is required !! "
+		printf "Please enter the Company Name now: "
+		read CompName
+		echo
+  	done
+	printf "Enter First Name: "
+  	read FirstName
+  	echo
+  	printf "Enter Last Name: "
+  	read LastName
+  	echo
+  	Name="$FirstName $LastName"
+  	printf "Enter Address: " 
+  	read Address
+	echo
+  	printf "Enter Contact Phone Number: "
+  	read PhoneNum
+  	echo
+	until [[ $PhoneNum =~ $PhonePattern ]]
+	do
+		echo "This is not a valid telephone number"
+		echo "eg: +3535113456 or 0873424234"
+		printf "Plese enter a valid telephone number now: "
+		read PhoneNum
+  		echo
+	done
+	printf "Enter E-mail Address: "
+  	read Email
+  	echo
+  	while [ -z "$Email" ]
+  	do
+		echo "!! A valid Email address is required !!"
+		printf "Please enter a valid email address now:"
+		read Email
+		echo
+  	done
+  	until [[ $Email =~ $EmailPattern ]]
+  	do 
+		echo "This is not a valid Email address, don't forget your @ and . "
+		printf "Enter a valid Email address now: "
+		read Email
+		echo
+	done
+
+  	./AddBiz "$CompName" "$Name" "$Address" "$PhoneNum" "$Email"
+  	;;
+
+# If the user enters 2 to remove an existing customer the RmBiz script is run
+# RmBiz Script allows the user to remove a Customer using their company name or contact name
+"Remove an existing Customer")
+	echo
+	echo "==========================================================================================================="
+	echo "                            REMOVE COMPANY DETAILS MENU                                                       "
+	echo "==========================================================================================================="
+	echo
+	# Array of string options for the menu
+	options=('Remove All Company Details' 'Remove a contact within a company' 'Return to Main Menu')
+	# Prompt to user looking for a valid menu number
+	PS3=$'\n----------------------------------------------------------------------------------------------------------- \nEnter A Menu Number (or enter any other key to view the menu again): '
+	# prints each menu command on one column instead of rows using a column width of 27
+	# Ref: unix.stackexchange.com/questions/293604/bash-how-to-make-each-menu-selections-in-1-line-instead-of-multiple-selections
+	COLUMNS=27
+
+	# Select the name in the options array
+	# ref: linuxhint.com/bash_select_command/ 
+	# helped with printing string menu options using an array
+	select name in "${options[@]}"
+	do
+		case $name in
+
+		# If the user enters 1 to Add a customer the AddBiz script is run
+		# AddBiz allows the user to add a new customer with business name
+		# Name, Address, phone number and email address
+		"Remove All Company Details")
+			echo "Remove Company"
+			;;
+
+		"Remove a contact within a company")
+			echo "Remove Contact"
+			;;
+
+		"Return to Main Menu")
+			break
+			;;
+		# If the user enters an invalid menu number the following message will be printed. 
+		*)
+        		echo "Enter a menu option between 1 and 3"
+        		COLUMNS=27
+        		REPLY=
+        		;;
+
+	esac
+	done
+	echo
+	echo "==========================================================================================================="
+	echo "                             COMPANY DIRECTORY MENU                                                        "
+	echo "==========================================================================================================="
+	echo
+        COLUMNS=27
+        REPLY=
+
+	;;
+# If the user selcts 3 to find a customer the FindBiz script is run
+# FindBiz script allows you find a customer using any of their details
+"Search for a Customer")
+	echo
+	printf "Enter the company details you want to find: "
+	read FindArgs
+	until [ -n "$FindArgs" ]
+	do
+		printf "You have not entered any details to find, please enter them now : "
+		read FindArgs
+	done
+	./FindBiz find "$FindArgs"
+  	;;
+
+# If the user selects 4 to email a customer
+"E-mail a Customer")
+	  echo "email a customer"
+	;;
+
+# If the user selects 5 to quit the program will be exited
+"Quit")
+  	break
+  	;;
+
+# If the user enters an invalid menu number the following message will be printed. 
+*)
+	echo
+	echo "==========================================================================================================="
+	echo "                             COMPANY DIRECTORY MENU                                                        "
+	echo "==========================================================================================================="
+	echo
+	echo "Enter a menu option between 1 and 5"
+  	COLUMNS=27
+  	REPLY=
+  	;;
+esac
+done
+echo "Goodbye"
+exit 0
