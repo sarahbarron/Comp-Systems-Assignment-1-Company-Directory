@@ -10,7 +10,7 @@
 # listed on the address book.
 
 echo "==========================================================================================================="
-echo "                             COMPANY DIRECTORY MENU                                                        "
+echo "                             BUSINESS DIRECTORY MENU                                                        "
 echo "==========================================================================================================="
 # Array of string options for the menu
 options=('Add a new Customer' 'Remove an existing Customer' 'Search for a Customer' 'E-mail a Customer' 'Quit')
@@ -158,7 +158,7 @@ case $name in
 		printf "You have not entered any details to find, please enter them now : "
 		read FindArgs
 	done
-	./FindBiz find "$FindArgs"
+	./FindBiz find $FindArgs
   	;;
 
 # If the user selects 4 to email a customer

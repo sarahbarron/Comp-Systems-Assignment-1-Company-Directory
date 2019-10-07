@@ -19,20 +19,20 @@ then
 	then
 		# Create a string command using a while loop to loop through arguments
 		# The string will be made up of a command that searches for the first argument in
-		# the CompanyDetails.txt file, if there are more than 1 search arguments
+		# the BusinessDetails.txt file, if there are more than 1 search arguments
 		# The initial results are piped into another grep search for the next argument
 		# and so on until the final argument is searched for. This filters/narrows the
 		# results down to the contact that matches all command line arguments
 		# even if the order of arguments is different to the order of the contact details in the 
-		# CompanyDetails.txt file
-		FindCommand="grep --color=always -i \"$2\" CompanyDetails.txt | uniq"
+		# BusinessDetails.txt file
+		FindCommand="grep --color=always -i \"$2\" BusinessDetails.txt | uniq"
 		num=3
 		while [ $num -le $# ]
 		do
 			FindCommand="$FindCommand | grep --color=always -i \"${!num}\""
 			num=`expr $num + 1`
 		done
-		
+
 		# eval is a built in command that takes a string as its argument and runs the command stored in
 		# the argument
 		# ref: https://stackoverflow.com/questions/2355148/run-a-string-as-a-command-within-a-bash-script
@@ -57,14 +57,14 @@ then
 	# An email address can be stored in many companies as the contact person might work for more than one company
 	elif [ "$1" == "dupl" ]
 	then
-		# Check the CompanyDetails.txt file for a match of 
+		# Check the BusinessDetails.txt file for a match of 
                 # the 2nd argument (email address) starting with a | symbol and located at the end of the line
                 # pipe any matches to then check for a match of the third argument (company name
 		# to be located at the start of the line follwed by a | symbol
-                DupContact=$(grep -i "|$2$" CompanyDetails.txt| uniq | grep -i "^$3|")
+                DupContact=$(grep -i "|$2$" BusinessDetails.txt| uniq | grep -i "^$3|")
 
                 # count the number of matches
-                DupNumOfMatches=$(grep -i "|$2$" CompanyDetails.txt| uniq | grep -i "^$3|" | wc -l)
+                DupNumOfMatches=$(grep -i "|$2$" BusinessDetails.txt| uniq | grep -i "^$3|" | wc -l)
 
                 # if there are no matches exit with a false exit status 1
                 # otherwise tell the user there is a contact already stored for this company with the same email address

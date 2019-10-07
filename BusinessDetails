@@ -1,8 +1,0 @@
-# Author: Sarah Barron
-# Module: Computer Systems and Networks
-# Assignment-1: Linux Shell Scripting 
-
-# Description: BusinessDetails
-# A file which stores locally busniness contact information
-# It stores: Company Name, First Fame, Last Name, Postal Address, Contact
-# phone number and Email Address.
