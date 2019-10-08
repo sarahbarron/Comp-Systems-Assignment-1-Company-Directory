@@ -1,0 +1,205 @@
+#!/bin/bash
+# Author: Sarah Barron
+# Module: Computer Systems and Networks
+# Assignment-1: Linux Shell Scripting
+
+# Description: Email
+# In This script you will be able to send an email to a contact,
+# all contacts within a company or all contacts in the business directory
+
+
+echo "==========================================================================================================="
+echo "                                         EMAIL MENU                                                        "
+echo "==========================================================================================================="
+
+# Array of string options for the Email menu
+options=('Email a contact' 'Email all contacts in a company' 'Email all contacts in the business directory' 'Return to main menu')
+
+# Prompt to user for a valid menu number
+PS3=$'\n----------------------------------------------------------------------------------------------------------- \nEnter A Menu Number (or enter any other key to view the menu again): '
+
+# prints each menu command on one column instead of rows using a column width of 27
+COLUMNS=27
+
+# Select the name in the options array
+select name in "${options[@]}"
+do
+case $name in
+
+# If the user enters 1 to Email a contact 
+# find the contact the user wants to email
+# find their email addresss
+# prompt the user for a subject and message body
+# send the email
+"Email a contact")
+
+	YorN=""
+	EmailAddress=""
+
+	# Ask the member if they know the email address or not, only accept y/Y, n/N, x/X as inputs
+	# continue to ask the question until a valid input is received
+	until [ "$YorN" = 'y' ] || [ "$YorN" = 'Y' ] || [ "$YorN" = 'n' ] || [ "$YorN" = 'N' ]
+        do
+		echo
+		printf "Do you know the email address of the contact (y/n or x to exit) : "
+		read YorN
+		if [ "$YorN" = "x" ] || [ "$YorN" = "X" ]
+                then 
+			exit 0
+                fi
+		echo
+	done
+
+	# If the member inputs y or Y - they know the email address ask the user to enter an email
+	# address continue to ask for the email address until the user enters text
+	if [ "$YorN" = 'y' ] || [ "$YorN" = 'Y' ]
+	then
+		until [ "$EmailAddress" != "" ]
+		do
+			printf "Enter the contacts email address (or x to return to main menu):"
+			read EmailAddress
+			if [ "$EmailAddress" = "x" ] || [ "$EmailAddress" = "X" ]
+                        then
+                                exit 0
+                        fi
+			echo
+		done
+
+	# Otherwise the member has inputted n or N therefore they don't know the email address
+	# Ask the user to input the contact details they do know and find contacts that match 
+	# the user input. 
+	# if no matches are found continue to ask the user for contact details until a match 
+        # is found
+	# Once a match is found list the matches and ask the user to input the email address 
+	# of the contact they want to email from the list or x to exit
+	else
+		contact=""
+		until [ "$contact" != "" ]
+		do
+			echo "Let us find the contact for you"
+			printf "Enter the contact details you know (or x to return to main menu) : "
+			read contact
+			if [ "$contact" = "x" ] || [ "$contact" = "X" ]
+                	then
+                        	exit 0
+                	fi
+			echo
+		done
+		FindBiz=$(./FindBiz find "$contact")
+		while [ $? -eq 1 ]
+		do
+			contact=""
+			echo "No contacts with these details are stored in the Business Directory"
+			printf "Enter valid contact details (or x to return to the main menu) : "
+			read contact
+			echo
+			until [ "$contact" != "" ]
+	                do
+                        	printf "Enter valid contact details (or x to return to main menu) : "
+                        	read contact
+                       	 	if [ "$contact" = "x" ] || [ "$contact" = "X" ]
+                        	then
+                                	exit 0
+                        	fi
+				echo
+			done
+			FindBiz=$(./FindBiz find "$contact")
+		done
+		echo "----------------------------------------------------------------------------------------------------------"
+		echo
+		echo $FindBiz
+		echo
+		echo "----------------------------------------------------------------------------------------------------------"
+		until [ "$EmailAddress" != "" ]
+		do
+			printf "From the above list ENTER THE EMAIL ADDRESS of the contact you wish to email (or x to return to main menu) :"
+			read EmailAddress
+			echo
+			if [ "$EmailAddress" = "x" ] || [ "$EmailAddress" = "X" ]
+       	        	then 
+               	        	exit 0
+               		fi
+			echo
+		done
+	fi
+
+	# if the email address entered by the user is not an email address in the business directory 
+	# continue to ask the user for a valid email address or x to exit
+	while [ `awk -F '|' '{print $5}' BusinessDetails.txt | grep "^$EmailAddress$" | uniq | wc -l` -eq 0 ]
+	do
+		echo "The email address you entered is not stored in the Business Directory"
+		printf "Enter a valid email address (or x to exit) : " 
+		read EmailAddress
+		if [ "$EmailAddress" = "x" ] || [ "$EmailAddress" = "X" ]
+                then
+                        exit 0
+                fi
+		echo
+	done
+
+	# Continue to ask the user for a subject for the email until text is entered or x to exit
+	Subject=""
+	until [ "$Subject" != "" ]
+	do
+		printf "Enter the email subject (or x to return to the main menu): "
+		read Subject
+		echo
+	done
+	if [ "$Subject" = "x" ] || [ "$Subject" = "X" ]
+   	then 
+            	exit 0
+       	fi
+
+	# Continue to ask the user for a message body for the email until text is entered or x to exit
+	Message=""
+	until [ "$Message" != "" ]
+	do
+		echo "Enter the message you want to send (or x to exit): "
+		read Message
+		echo
+	done
+	if [ "$Message" = "x" ] || [ "$Message" = "X" ]
+	then
+       	        exit 0
+        fi
+	
+	# send the email
+	echo $Message | mail -s $Subject $EmailAddress
+	echo "Email sent to $EmailAddress"
+	;;
+
+
+"Email all contacts in a company")
+	printf "Enter the name of the company (or x to exit):"
+	if [ "$YorN" = "x" ] || [ "$YorN" = "X" ]
+        then 
+                exit 0
+        fi
+
+	read EmailAddress
+	;;
+
+"Email all contacts in the business directory")
+	echo "All Contacts emailed"
+	;;
+
+"Return to main menu")
+	exit 0
+	;;
+
+# If the user enters an invalid menu number the following message will be printed. 
+*)
+        echo
+        echo "==========================================================================================================="
+        echo "                                         EMAIL MENU                                                        "
+        echo "==========================================================================================================="
+        echo
+        echo "Enter a menu option between 1 and 4"
+        COLUMNS=27
+        REPLY=
+        ;;
+esac
+done
+exit 0
+
+

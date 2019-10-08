@@ -95,9 +95,10 @@ case $name in
 # If the user enters 2 to remove an existing customer the RmBiz script is run
 # RmBiz Script allows the user to remove a Customer using their company name or contact name
 "Remove an existing Customer")
-	echo
+	# ref: unix.stackexchange.com/questions/247695/clear-command-in-console-dialog
+        clear >$(tty)
 	echo "==========================================================================================================="
-	echo "                            REMOVE COMPANY DETAILS MENU                                                       "
+	echo "                            REMOVE EXISTING CUSTOMERS MENU                                                 "
 	echo "==========================================================================================================="
 	echo
 	# Array of string options for the menu
@@ -138,9 +139,9 @@ case $name in
 
 	esac
 	done
-	echo
+	clear >$(tty)	
 	echo "==========================================================================================================="
-	echo "                             COMPANY DIRECTORY MENU                                                        "
+	echo "                             BUSINESS DIRECTORY MENU                                                        "
 	echo "==========================================================================================================="
 	echo
         COLUMNS=27
@@ -163,7 +164,16 @@ case $name in
 
 # If the user selects 4 to email a customer
 "E-mail a Customer")
-	  echo "email a customer"
+        clear >$(tty)
+	./Email
+	clear >$(tty)
+        echo "==========================================================================================================="
+        echo "                             BUSINESS DIRECTORY MENU                                                        "
+        echo "==========================================================================================================="
+        echo
+        echo "Enter a menu option between 1 and 5"
+        COLUMNS=27
+        REPLY=
 	;;
 
 # If the user selects 5 to quit the program will be exited
@@ -173,9 +183,9 @@ case $name in
 
 # If the user enters an invalid menu number the following message will be printed. 
 *)
-	echo
+	clear >$(tty)
 	echo "==========================================================================================================="
-	echo "                             COMPANY DIRECTORY MENU                                                        "
+	echo "                             BUSINESS DIRECTORY MENU                                                        "
 	echo "==========================================================================================================="
 	echo
 	echo "Enter a menu option between 1 and 5"

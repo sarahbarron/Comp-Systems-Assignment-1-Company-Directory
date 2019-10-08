@@ -1,2 +1,4 @@
 Charlies Angels|Charlie Boyle|hololloo|42342342|charlie@angels.com
 James company|james boyle|kilkenny ireland|34242|james@boyles.com
+James Company|Julie Boyle|Kilkenny Ireland|324242|julie@boyles.com
+Lake Tour Stables|Pat Flavin|Carrigavantry|342342|pat@laketours.com
