@@ -41,7 +41,7 @@ case $name in
 	until [ "$YorN" = 'y' ] || [ "$YorN" = 'Y' ] || [ "$YorN" = 'n' ] || [ "$YorN" = 'N' ]
         do
 		echo
-		printf "Do you know the email address of the contact (y/n or x to exit) : "
+		printf "Do you know the email address of the contact (y/n or x to return to the main menu) : "
 		read YorN
 		if [ "$YorN" = "x" ] || [ "$YorN" = "X" ]
                 then 
@@ -95,19 +95,19 @@ case $name in
 			echo
 			until [ "$contact" != "" ]
 	                do
+				if [ "$contact" = "x" ] || [ "$contact" = "X" ]
+                                then
+                                        exit 0
+                                fi
                         	printf "Enter valid contact details (or x to return to main menu) : "
                         	read contact
-                       	 	if [ "$contact" = "x" ] || [ "$contact" = "X" ]
-                        	then
-                                	exit 0
-                        	fi
 				echo
 			done
 			FindBiz=$(./FindBiz find "$contact")
 		done
 		echo "----------------------------------------------------------------------------------------------------------"
 		echo
-		echo $FindBiz
+		echo "$FindBiz"
 		echo
 		echo "----------------------------------------------------------------------------------------------------------"
 		until [ "$EmailAddress" != "" ]
@@ -125,10 +125,10 @@ case $name in
 
 	# if the email address entered by the user is not an email address in the business directory 
 	# continue to ask the user for a valid email address or x to exit
-	while [ `awk -F '|' '{print $5}' BusinessDetails.txt | grep "^$EmailAddress$" | uniq | wc -l` -eq 0 ]
+	while [ `awk -F '|' '{print $5}' BusinessDetails.txt | grep -i "^$EmailAddress$" | uniq | wc -l` -eq 0 ]
 	do
 		echo "The email address you entered is not stored in the Business Directory"
-		printf "Enter a valid email address (or x to exit) : " 
+		printf "Enter a valid email address (or x to return to the main menu) : " 
 		read EmailAddress
 		if [ "$EmailAddress" = "x" ] || [ "$EmailAddress" = "X" ]
                 then
@@ -154,7 +154,7 @@ case $name in
 	Message=""
 	until [ "$Message" != "" ]
 	do
-		echo "Enter the message you want to send (or x to exit): "
+		echo "Enter the message you want to send (or x to return to the main menu): "
 		read Message
 		echo
 	done
@@ -162,26 +162,119 @@ case $name in
 	then
        	        exit 0
         fi
-	
+
 	# send the email
 	echo $Message | mail -s $Subject $EmailAddress
 	echo "Email sent to $EmailAddress"
 	;;
 
 
+# Option to email all contacts in a certain company
+# Ask user to enter the company name, check the name entered is in the company directory
+# continue to ask until a valid company name is entered or x for exit
+# Once a valid company is received Filter the business directory by the company name
+# Filter the results by the email column 
+# Send an email to all emails addressess in this column 
 "Email all contacts in a company")
-	printf "Enter the name of the company (or x to exit):"
+	echo
+	printf "Enter the name of the company (or x to return to main menu):"
+	read Company
 	if [ "$YorN" = "x" ] || [ "$YorN" = "X" ]
         then 
                 exit 0
         fi
+	echo
 
-	read EmailAddress
-	;;
+	# filter the business directory by column 1 (company names) and count the number of records
+	# if the number of records equals zero ask the user to enter a valid company name 
+	while [ `awk -F '|' '{print $1}' BusinessDetails.txt | grep -i "^$Company$" | uniq | wc -l` -eq 0 ]
+        do
+                echo "The Company name you entered is not stored in the Business Directory"
+                printf "Enter a valid Company name (or x to return to the main menu) : " 
+                read Company
+                if [ "$Company" = "x" ] || [ "$Company" = "X" ]
+                then
+                        exit 0
+                fi
+                echo
+        done
 
+	# Filter the BusinessDetails.txt file by the company name entered by the user 
+	# Filter the results by Column 5 (email address)
+	EmailAddresses=`grep -i "^$Company|" BusinessDetails.txt | awk -F '|' '{print $5}'`
+
+	 # Continue to ask the user for a subject for the email until text is entered or x to exit
+        Subject=""
+        until [ "$Subject" != "" ]
+        do
+                printf "Enter the email subject (or x to return to the main menu): "
+                read Subject
+                echo
+        done
+        if [ "$Subject" = "x" ] || [ "$Subject" = "X" ]
+        then 
+                exit 0
+        fi
+
+        # Continue to ask the user for a message body for the email until text is entered or x to exit
+        Message=""
+        until [ "$Message" != "" ]
+        do
+                echo "Enter the message you want to send (or x to return to the main menu): "
+                read Message
+                echo
+        done
+        if [ "$Message" = "x" ] || [ "$Message" = "X" ]
+        then
+                exit 0
+        fi
+
+        # send the email to all addresses
+        echo $Message | mail -s $Subject $EmailAddresses
+        echo "Email sent to to all $Company contacts "
+        ;;
+
+
+# Send an email to all contacts in the address book
 "Email all contacts in the business directory")
-	echo "All Contacts emailed"
-	;;
+	echo
+	echo "Message Details"
+	echo
+	# filter the BusinessDirectory.txt file by the 5th Column (email addresses)
+	EmailAddresses=`awk -F '|' '{print $5}' BusinessDetails.txt`
+
+         # Continue to ask the user for a subject for the email until text is entered or x to exit
+        Subject=""
+        until [ "$Subject" != "" ]
+        do
+                printf "Enter the email subject (or x to return to the main menu): "
+                read Subject
+                echo 
+        done
+        if [ "$Subject" = "x" ] || [ "$Subject" = "X" ]
+        then 
+                exit 0
+        fi
+
+        # Continue to ask the user for a message body for the email until text is entered or x to exit
+        Message=""
+        until [ "$Message" != "" ]
+        do
+                echo "Enter the message you want to send (or x to return to the main menu): "
+                read Message
+                echo
+        done
+        if [ "$Message" = "x" ] || [ "$Message" = "X" ]
+        then
+                exit 0
+        fi
+
+        # send the email to all contacts
+        echo $Message | mail -s $Subject $EmailAddresses
+        echo "Email sent to all contacts in the Business Directory"
+        ;;
+
+
 
 "Return to main menu")
 	exit 0
@@ -201,5 +294,3 @@ case $name in
 esac
 done
 exit 0
-
-
