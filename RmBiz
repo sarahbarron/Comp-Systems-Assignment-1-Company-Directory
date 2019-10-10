@@ -1,3 +1,5 @@
+#!/bin/bash
+
 # Author: Sarah Barron
 # Module: Computer Systems and Networks
 # Assignment-1: Linux Shell Scripting 
@@ -5,6 +7,268 @@
 # Description: RmBiz
 # A script which removes all of a business's information from the address
 # book based on a particular businesses name or contact name
+# A single contact can be removed or
+# All contacts belonging to a company can be removed
+
+# Function to check if a user has entered exit at any stage 
+# which brings the user back to the main menu
+CheckForExit(){
+ExitPattern="^[eE][xX][iI][tT]$"
+if [[ $1 =~ $ExitPattern ]]
+then
+        clear
+        exit 0
+fi
+
+}
 
 
+echo "==========================================================================================================="
+echo "                               REMOVE CONTACT  MENU                                                        "
+echo "==========================================================================================================="
+
+# Array of string options for the Email menu
+options=('Remove a single contact' 'Remove all company contacts' 'Return to main menu')
+
+# Prompt to user for a valid menu number
+PS3=$'\n----------------------------------------------------------------------------------------------------------- \nEnter A Menu Number (or press enter to view the menu again): '
+
+# prints each menu command on one column instead of rows using a column width of 27
+COLUMNS=27
+
+# Select the name in the options array
+select name in "${options[@]}"
+do
+case $name in
+
+# If the user enters 1 to Remove a single contact 
+# find the contact the user wants to remove
+# Using their unique email address remove the contact
+"Remove a single contact")
+	echo
+	echo "TYPE IN EXIT AT ANY STAGE TO RETURN TO THE MAIN MENU"
+	echo
+	YorN=""
+        EmailAddress=""
+
+        # Ask the member if they know the email address, only accept y/Y, n/N, x/X as inputs
+        # continue to ask the question until a valid input is received
+        until [ "$YorN" = 'y' ] || [ "$YorN" = 'Y' ] || [ "$YorN" = 'n' ] || [ "$YorN" = 'N' ]
+        do
+                echo
+                printf "Do you know the EMAIL ADDRESS of the contact (y/n or exit to return to the main menu) : "
+                read YorN
+		CheckForExit "$YorN"
+        done
+
+        # If the member inputs y or Y - they know the email address ask the user to enter an email
+        # address continue to ask for the email address until the user enters text
+        if [ "$YorN" = 'y' ] || [ "$YorN" = 'Y' ]
+        then
+                until [ "$EmailAddress" != "" ]
+                do
+        		echo 
+	               	printf "Enter the contacts EMAIL ADDRESS (or exit to return to main menu):"
+                        read EmailAddress
+			CheckForExit "$EmailAddress"
+                        echo
+                done
+
+		# if the email address entered by the user is not an email address in the business directory 
+                # continue to ask the user for a valid email address or x to exit
+                while [ `awk -F '|' '{print $5}' BusinessDetails.txt | grep -i "^$EmailAddress$" | wc -l` -eq 0 ]
+                do
+               	        echo "The email address you entered is not stored in the Business Directory"
+                	printf "Enter a valid email address (or exit to return to the main menu) : " 
+                        read EmailAddress
+			CheckForExit "$EmailAddress"
+                 done
+		
+		# get the full contact based on the email address inputed by the user
+		 FullContact=$(awk -F '|' '{print $2, " - ", $1, " - ", $3, " - ", $4, "-", $5}' BusinessDetails.txt | grep --color=always -i "$EmailAddress$" | uniq)
+		# convert the inputted email address to lowercase as SED for deleting is case sensitive
+		 EmailAddress=$(echo "$EmailAddress" | awk -F'|' '{print tolower($0)}')
+
+        # Otherwise the member has inputted n or N therefore they don't know the email address
+        # Ask the user to input the contact name then find contacts that match the user input
+        else
+		# Contiue to ask for a contact name until user inputs text
+                contact=""
+                until [ "$contact" != "" ]
+                do
+                        echo
+			echo 'LET US FIND THE CONTACT FOR YOU!'
+                        printf "Enter the contact NAME (or exit to return to main menu) : "
+                        read contact
+			CheckForExit "$contact"
+
+                done
+
+		# If the inputted contact is not a match to a contact in the BusinessDirectory.txt
+		# Continue to ask user to input contact name or exit until a match is found in the business directory
+                while [ `awk -F '|' '{print $2}' BusinessDetails.txt | grep -i "$contact" | wc -l` -eq 0  ]
+                do
+                        contact=""
+                        echo
+			echo "The contact NAME you have entered is not stored in Business Directory"
+                        printf "Enter valid contact NAME (or exit to return to the main menu) : "
+                        read contact
+                        echo
+                        until [ "$contact" != "" ]
+                        do
+                                printf "Enter valid contact details (or exit to return to main menu) : "
+                                read contact
+                                echo
+                        done
+			CheckForExit "$contact"
+                done
+
+
+		# If there is only one contact matching the user input get the matching email
+		if [ `awk -F '|' '{print $2}' BusinessDetails.txt | grep -i "$contact" | wc -l` -eq 1  ]
+		then
+			# get the full contact details of the matched email address
+			FullContact=$(awk -F '|' '{print $2, " - ", $1, " - ", $3, " - ", $4, "-", $5}' BusinessDetails.txt | grep -i "^.*$contact.*-" | uniq)
+			# get the email address of the found contact
+			EmailAddress=$(echo "$FullContact" | awk '{print $NF}')
+
+
+		# Otherwise if there are more than one matches print the matches and ask the user to input the email address of the 
+		# contact they want to remove
+		else
+			ListContacts=$(awk -F '|' '{print $2, " -> ", $1, " - ", $3, " - ", $4, "-", $5}' BusinessDetails.txt | grep -i "$contact.*>" | uniq)
+
+			echo "----------------------------------------------------------------------------------------------------------"
+			echo
+			echo "$ListContacts"
+                	echo
+                	echo "----------------------------------------------------------------------------------------------------------"
+                	until [ "$EmailAddress" != "" ]
+                	do
+				echo
+				echo "WE FOUND MORE THAN ONE MATCH TO YOUR SEARCH"
+				printf "ENTER THE EMAIL ADDRESS OF THE CONTACT YOU WANT TO REMOVE : "
+                        	read EmailAddress
+                        	echo
+                	done
+			CheckForExit "$EmailAddress"
+
+			# if the email address entered by the user is not an email address in the business directory 
+		        # continue to ask the user to input a valid email address or exit
+        		while [ `awk -F '|' '{print $5}' BusinessDetails.txt | grep -i "^$EmailAddress$" | wc -l` -eq 0 ]
+        		do
+                		echo "The email address you entered is not stored in the Business Directory"
+                		printf "Enter a valid email address from the menu above (or exit to return to the main menu) : " 
+                		read EmailAddress
+				CheckForExit "$EmailAddress"
+                		echo
+        		done
+
+			# get the full contact details associated with the entered email address
+			FullContact=$(awk -F '|' '{print $2, " - ", $1, " - ", $3, " - ", $4, "-", $5}' BusinessDetails.txt | grep --color=always -i "$EmailAddress$" | uniq)
+			# convert the inputted email address to lowercase as SED for deleting is case sensitive 
+	                EmailAddress=$(echo "$EmailAddress" | awk -F'|' '{print tolower($0)}')
+		fi
+        fi
+
+	YesNo=""
+	# Continue to ask the user do they want to remove the chosen contact unitl they enter y, n or exit
+	until [ "$YesNo" = 'y' ] || [ "$YesNo" = 'Y' ] || [ "$YesNo" = 'n' ] || [ "$YesNo" = 'N' ]
+        do
+		echo "Contact : $FullContact"
+		printf "Do you want to remove this contact (y/n or exit to return to the main menu) : "
+        	read YesNo
+		CheckForExit "$YesNo"
+	done
+
+	# If the user inputs y delete the contact 
+        if [ "$YesNo" = 'y' ] || [ "$YesNo" = 'Y' ] 
+        then
+
+                sed -i "/$EmailAddress$/d" BusinessDetails.txt
+		echo "$EmailAddress has been removed from the company directory "
+        
+	# otherwise print a message to the user to say the contact hasn't been deleted
+	else
+		echo "No contact removed"
+	fi
+
+	;;
+
+# This option is if a user wants to delete all contacts associated with a particular company
+# The user must enter a valid company name and choose if they want to delete all contacts for that company
+"Remove all company contacts")
+	echo
+	echo "TYPE IN EXIT AT ANY STAGE TO RETURN TO THE MAIN MENU"
+
+	CompanyName=""
+	until [ "$CompanyName" != "" ]
+	do
+		echo
+		printf "What is the COMPANY NAME : "
+		read CompanyName
+		CheckForExit "$CompanyName"
+		echo
+	done
+
+	# while the number of companies with the name entered by the user is equal to zero (ie there are no
+	# companies stored in the Company Directory) ask the user to input a valid company name or exit
+	while [ `awk -F '|' '{ print $1 }' BusinessDetails.txt | uniq | grep -i "^$CompanyName$" | wc -l` -eq 0 ]
+	do
+		echo "$CompanyName is not stored in the Company Directory"
+		echo
+		echo '***** THIS IS A LIST OF COMPANIES STORED IN THE DIRECTORY *****'
+		echo
+		awk -F '|' '{print $1}' BusinessDetails.txt | sort | uniq 
+		echo
+		CompanyName=""
+		until [ "$CompanyName" != "" ]
+		do
+			printf "Enter a Company Name from the list above (or exit to return to the main menu) : "
+			read CompanyName
+		done
+		CheckForExit "$CompanyName"
+		echo
+	done
+
+	# In order to delete contacts the company name must be case sensitive for sed deletion
+	# so convert CompanyName inputted by the user to upper case 
+	CompanyName=$(echo "$CompanyName" | awk '{print toupper($0)}')
+
+	# The number of contacts associated with the company
+	NumOfContacts=$(awk -F '|' '{ print $1 }' BusinessDetails.txt | grep -i "^$CompanyName$" | wc -l)
+
+	echo "There are $NumOfContacts contacts stored for the company $CompanyName"
+
+	# Confirm with the user that they want to remove the contacts
+	YesNo=""
+	until [ "$YesNo" = 'y' ] || [ "$YesNo" = 'Y' ] || [ "$YesNo" = 'n' ] || [ "$YesNo" = 'N' ]
+	do
+		echo "Are you sure you want to delete them all (y/n or exit to return to the main menu)"
+		read YesNo
+		CheckForExit "$YesNo"
+	done
+
+	# If user chooses y or Y then delete all contacts related to the company name
+	if [ "$YesNo" = "y" ] || [ "$YesNo" = "Y" ]
+        then
+		sed -i "/^$CompanyName *|/d" BusinessDetails.txt
+		echo "ALl contacts associated with $CompanyName deleted"
+	else
+		echo "No contacts removed"
+	fi
+	;;
+
+"Return to main menu")
+        exit 0
+        ;;
+
+# If the user enters an invalid menu number the following message will be printed. 
+*)
+	echo
+	echo "INVALID OPTION CHOOSE A MENU OPTION BETWEEN 1 and 3"
+	;;
+esac
+done
+exit 0
 

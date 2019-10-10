@@ -6,7 +6,7 @@
 
 # Description: FindBiz
 # A script which will allow the user to search for an existing business based
-# upon any of the businesses information
+# upon any of the businesses information and search for a duplicate contact
 
 # Check there are search arguments in the command 
 if [ $# > 1 ]
@@ -19,28 +19,47 @@ then
 	then
 		# Create a string command using a while loop to loop through arguments
 		# The string will be made up of a command that searches for the first argument in
-		# the BusinessDetails.txt file, if there are more than 1 search arguments
+		# the BusinessDetails.txt file, if there are more than 1 arguments
 		# The initial results are piped into another grep search for the next argument
 		# and so on until the final argument is searched for. This filters/narrows the
 		# results down to the contact that matches all command line arguments
 		# even if the order of arguments is different to the order of the contact details in the 
 		# BusinessDetails.txt file
+		# This while loop will give you the most acurate result if all arguments are in the line 
+		# however if one of the arguments is missing from the line it won't return a match
 		FindCommand="grep --color=always -i \"$2\" BusinessDetails.txt | uniq"
 		num=3
 		while [ $num -le $# ]
 		do
 			FindCommand="$FindCommand | grep --color=always -i \"${!num}\""
-			num=`expr $num + 1`
+			num=$(expr $num + 1)
 		done
 
 		# eval is a built in command that takes a string as its argument and runs the command stored in
-		# the argument
+		# the argument, The command is then piped into a sed command to remove any | symbols from the results 
+		# and replace them with , symbol, to make it more legible
 		# ref: https://stackoverflow.com/questions/2355148/run-a-string-as-a-command-within-a-bash-script
 		eval "$FindCommand" | sed 's/|/, /g'
 
 		# count the number of matches
 		TotalMatch=`eval "$FindCommand | wc -l"`
-		# If there were no matched lines print a message to say this and exit
+
+		# If there are no matches of all arguments in the previous while loop 
+		# then search for each argument independently,
+		if [ $TotalMatch -eq 0 ]
+		then
+			i=2
+			TotalMatch=0
+			while [ $i -le $# ]
+			do
+				grep --color=always -i "${!i}" BusinessDetails.txt | sort | uniq
+				Count=$(grep --color=always -i "${!i}" BusinessDetails.txt | wc -l)
+				TotalMatch=$(expr $TotalMatch + $Count)
+				i=$(expr $i + 1)
+			done
+		fi
+
+		# If there are still no matched lines print a message to say this and exit
 		if [ $TotalMatch -eq 0 ]
 		then
 			SearchFor=$(echo "$*" | sed 's/^.....//')
@@ -58,7 +77,7 @@ then
 	then
 		# Check the BusinessDetails.txt file for a match of 
                 # the 2nd argument (email address) starting with a | symbol and located at the end of the line
-                # pipe any matches to then check for a match of the third argument (company name
+                # pipe any matches to then check for a match of the 3rd argument (company name
 		# to be located at the start of the line follwed by a | symbol
                 DupContact=$(grep -i "|$2$" BusinessDetails.txt| uniq | grep -i "^$3|")
 
@@ -66,7 +85,7 @@ then
                 DupNumOfMatches=$(grep -i "|$2$" BusinessDetails.txt| uniq | grep -i "^$3|" | wc -l)
 
                 # if there are no matches exit with a false exit status 1
-                # otherwise tell the user there is a contact already stored for this company with the same email address
+                # otherwise inform the user there is a contact already stored for this company with the same email address and exit true
                 if [ $DupNumOfMatches -eq 0 ]
                 then
                 	exit 1
@@ -81,7 +100,5 @@ then
                         echo "If you do want to add this new contact please remove the stored contact first and try again"
                         exit 0
 		fi
-	# end if 1st arg = dupl
 	fi
-# end if num of args is greater than 2
 fi
