@@ -1,7 +1,14 @@
-FACEBOOK|Jim Power|Main Street, Wexford|4324242|jimpowerwex@facebook.com
-FACEBOOK|Jim Power|Main Street, Kilkenny|4324234233|jimpowerkk@facebook.com
-FACEBOOK|JIM POWER |MAIN STREET WATERFORD|43242432|jimpowerwfd@facebook.com
-FACEBOOK|Tracey Power|Kill Waterford|3423423|traceypower@facebook.com
-GOOGLE|sharon walsh|kill, waterford|23432432|sharonwalsh@google.com
-FACEBOOK|sharon walsh|kill, waterford|23432432|sharonwalsh@google.com
-FACEBOOK|jim mac|clara kilkenny|342432432|jimmac@facebook.com
+FACEBOOK|Jim Power|Clara, Co. Kilkenny|+353890703040|jimpower@facebook.com
+FACEBOOK|Jim Power|Main Street, Clara, Kilkenny|0863883298|jimpower2@facebook.com
+FACEBOOK|Julie Power|Main Street, Mullinavat, Co. Kilkenny.|+878945789|juliepower@facebook.com
+FACEBOOK|Mary Walsh|Tullogher, Kilkenny|0863920968|marywalsh@facebook.com
+GOOGLE|Mary Murphy|Lisduggan, Waterford|0873020481|marymurphy@google.com
+GOOGLE|jim murphy|clara, kilkenny|0863914938|jimmurphy@google.com
+GOOGLE|louise king|tramore, co. waterford|0867936702|louiseking@facebook.com
+GOOGLE|jenny jones|Mullinavat, Co. Kilkenny.|0869362089|jennyjones@google.com
+MICROSOFT|Will Young|Clara, Co Kilkenny|0873930284|willyoung@microsoft.com
+MICROSOFT|james power|paulstown, co kilkenny|0872349321|jamespower@microsoft.com
+APPLE|Lily Murphy|Lisduggan, Co Waterford|083870279|lilymurphy@apple.com
+APPLE|joe malone|clara, kilkenny|0833927808|joemalone@apple.com
+APPLE|mairead power|Lisduggan, Co Waterford|0873048204|maireadpower@apple.com
+FACEBOOK|Jim Smith |Tramore Co Waterford|0839849238|jimsmith@facebook.com

@@ -9,7 +9,7 @@
 # The company Name, contact name and Email address are required the rest of the arguments can be null.
 
 # Check for a duplicate before adding a new contact
-./FindBiz dupl "$5" "$1" "$2"
+./FindBiz dupl "$5" 
 
 # if the check for a duplicate returns true exit back to the main menu without saving the contact
 if [ $? -eq 0 ]

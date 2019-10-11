@@ -55,11 +55,18 @@ case $name in
 # If the user enters 1 to Add a customer the user is prompted for the business details
 # Company Name, Contact Name, Address, phone number and email address
 # The Email address is required as it is the unique identifier
-# The Company name is required as each unique contact must be associated with a company
+# The Company name is required for lookup purposes when removing and emailing company contacts
 # Either a first name or a last name is required for lookup purposes when removing a contact
 # Address and telephone number are optional
 "Add a new Customer")
-	echo "TYPE IN EXIT AT ANY STAGE TO RETURN TO THE MAIN MENU"
+	clear
+	echo
+	echo "==========================================================================================================="
+	echo
+	echo "ADD A NEW CONTACT"
+	echo
+	echo "(Type in exit at any stage to return to the main menu)"
+	echo "==========================================================================================================="
 	echo
 	printf "Enter Company Name: "
 	read CompName
@@ -139,7 +146,7 @@ case $name in
 	done
 	# convert all email addresses to lowercase, as when using SED with email addresses SED is case sensitive
 	Email=$(echo "$Email" | awk '{ print tolower($0)}')
-
+	
 	# Send the Company Details inputted by the user to the AddBiz script
   	./AddBiz "$CompName" "$Name" "$Address" "$PhoneNum" "$Email"
   	;;
@@ -165,8 +172,14 @@ case $name in
 # the FindBiz script is then run
 # FindBiz script allows you find a customer using any of their details
 "Search for a Customer")
+	clear
 	echo
-	echo "TYPE IN EXIT AT ANY STAGE TO RETURN TO THE MAIN MENU"
+	echo "==========================================================================================================="
+        echo
+	echo "SEARCH FOR A CUSTOMER"
+	echo
+        echo "(Type in exit at any stage to return to the main menu)"
+        echo "==========================================================================================================="
 	echo
 	printf "Enter a detail or details of the company you want to find: "
 	read FindArgs
@@ -210,3 +223,4 @@ done
 echo "You have chosen to quit the Business Directory"
 echo "Have a nice day!"
 exit 0
+	

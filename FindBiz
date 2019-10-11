@@ -71,18 +71,18 @@ then
 		exit 0
 
 	# If the 1st argument is dupl check for duplicate contacts
-	# A Company can only have unique email addresses stored in it
-	# An email address can be stored in many companies as the contact person might work for more than one company
+	# Contacts must have a unique email addresses must be unique
+	# This checks if there is an email address the same as the new contacts email address already stored
+	# A false exit 0 is returned if there is no duplicate
+	# A true exit 1 is returned if tehre is a duplicate
 	elif [ "$1" == "dupl" ]
 	then
 		# Check the BusinessDetails.txt file for a match of 
                 # the 2nd argument (email address) starting with a | symbol and located at the end of the line
-                # pipe any matches to then check for a match of the 3rd argument (company name
-		# to be located at the start of the line follwed by a | symbol
-                DupContact=$(grep -i "|$2$" BusinessDetails.txt| uniq | grep -i "^$3|")
+                DupContact=$(grep -i "|$2$" BusinessDetails.txt)
 
                 # count the number of matches
-                DupNumOfMatches=$(grep -i "|$2$" BusinessDetails.txt| uniq | grep -i "^$3|" | wc -l)
+                DupNumOfMatches=$(grep -i "|$2$" BusinessDetails.txt | wc -l)
 
                 # if there are no matches exit with a false exit status 1
                 # otherwise inform the user there is a contact already stored for this company with the same email address and exit true
@@ -93,7 +93,7 @@ then
                         echo
                         echo "DUPLICATE Contacts are not allowed"
                         echo
-                        echo "The following contact is already stored for this company with the same email address as the one provided"
+                        echo "The following contact is already stored with the same email address as the one provided"
 			echo
 			echo '***' `echo $DupContact | sed 's/|/, /g'` '***' 
                         echo 
