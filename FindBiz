@@ -77,12 +77,12 @@ then
 	# A true exit 1 is returned if tehre is a duplicate
 	elif [ "$1" == "dupl" ]
 	then
-		# Check the BusinessDetails.txt file for a match of 
-                # the 2nd argument (email address) starting with a | symbol and located at the end of the line
-                DupContact=$(grep -i "|$2$" BusinessDetails.txt)
+		# Filter the BusinessDetails.txt file to return just email addresses
+                # search for the 2nd argument (email address) in the list of emails
+                DupContact=$(awk -F '|' '{print $5}' BusinessDetails.txt | grep -i "^$2$")
 
                 # count the number of matches
-                DupNumOfMatches=$(grep -i "|$2$" BusinessDetails.txt | wc -l)
+                DupNumOfMatches=$(awk -F '|' '{print $5}' BusinessDetails.txt | grep -i "^$2$" | wc -l)
 
                 # if there are no matches exit with a false exit status 1
                 # otherwise inform the user there is a contact already stored for this company with the same email address and exit true
