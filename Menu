@@ -29,6 +29,7 @@ CheckForExit(){
 	then
         	clear
         	./Menu
+		exit 0
 	fi
 }
 
@@ -210,6 +211,7 @@ case $name in
 
 # If the user selects 5 to quit the program will be exited
 "Quit")
+
   	break
   	;;
 
