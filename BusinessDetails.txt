@@ -5,10 +5,7 @@ FACEBOOK|Mary Walsh|Tullogher, Kilkenny|0863920968|marywalsh@facebook.com
 GOOGLE|Mary Murphy|Lisduggan, Waterford|0873020481|marymurphy@google.com
 GOOGLE|jim murphy|clara, kilkenny|0863914938|jimmurphy@google.com
 GOOGLE|louise king|tramore, co. waterford|0867936702|louiseking@facebook.com
-GOOGLE|jenny jones|Mullinavat, Co. Kilkenny.|0869362089|jennyjones@google.com
-MICROSOFT|Will Young|Clara, Co Kilkenny|0873930284|willyoung@microsoft.com
-MICROSOFT|james power|paulstown, co kilkenny|0872349321|jamespower@microsoft.com
-APPLE|Lily Murphy|Lisduggan, Co Waterford|083870279|lilymurphy@apple.com
-APPLE|joe malone|clara, kilkenny|0833927808|joemalone@apple.com
-APPLE|mairead power|Lisduggan, Co Waterford|0873048204|maireadpower@apple.com
 FACEBOOK|Jim Smith |Tramore Co Waterford|0839849238|jimsmith@facebook.com
+GOOGLE|Julie Power|Tramore waterford|928409238|juliepower@google.com
+GOOGLE|Jim Smith|tramore|35787458784|jimsmith@google.com
+GOOGLE|joey barron |tramroe|+578347853|joeybarron@google.com

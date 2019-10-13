@@ -45,6 +45,7 @@ case $name in
 # prompt the user for a subject and message body
 # send the email
 "Email a contact")
+	clear
 	echo	
 	echo "TYPE IN EXIT AT ANY STAGE TO RETURN TO THE MAIN MENU"
 
@@ -178,6 +179,7 @@ case $name in
 # Filter the results by the email column 
 # Send an email to all emails addressess in this column 
 "Email all contacts in a company")
+	clear
 	echo
 	echo "TYPE IN EXIT AT ANY STAGE TO RETURN TO THE MAIN MENU"
 	echo
@@ -242,6 +244,7 @@ case $name in
 
 # Send an email to all contacts in the address book
 "Email all contacts in the business directory")
+	clear
 	echo
 	echo "TYPE IN EXIT AT ANY STAGE TO RETURN TO THE MAIN MENU"
 	echo

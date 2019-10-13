@@ -45,6 +45,7 @@ case $name in
 # find the contact the user wants to remove
 # Using their unique email address remove the contact
 "Remove a single contact")
+	clear
 	echo
 	echo "TYPE IN EXIT AT ANY STAGE TO RETURN TO THE MAIN MENU"
 	echo
@@ -201,6 +202,7 @@ case $name in
 # This option is if a user wants to delete all contacts associated with a particular company
 # The user must enter a valid company name and choose if they want to delete all contacts for that company
 "Remove all company contacts")
+	clear
 	echo
 	echo "TYPE IN EXIT AT ANY STAGE TO RETURN TO THE MAIN MENU"
 

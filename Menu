@@ -81,6 +81,16 @@ case $name in
 		read CompName
 		echo
   	done
+	# Arguments can't have the dilimeter symbol | in their name so check for this 
+	# and ask the user to re enter the argument again if the argument contains |
+	while [ $(echo "$CompName" | grep "|" | wc -l) -gt 0 ]
+        do
+                echo
+                echo "The character'|' is a special character and can not be used in Company Names"
+                printf "Enter Company Name: "
+                read CompName
+		echo
+        done
 	CheckForExit "$CompName"
 	# convert the company name to uppercase so that every entry for the 
 	# company is the same case, this helps with later when trying to email
@@ -88,10 +98,27 @@ case $name in
 	CompName=$(echo "$CompName" | awk '{ print toupper($0)}')
 	printf "Enter First Name: "
   	read FirstName
+	while [ $(echo $FirstName | grep "|" | wc -l) -gt 0 ]
+        do
+                echo
+                echo "The character'|' is a special character and can not be used in Names"
+                printf "Enter First Name: "
+                read FirstName
+       	done
 	CheckForExit "$FirstName"
   	echo
   	printf "Enter Last Name: "
   	read LastName
+	# Arguments can't have the dilimeter symbol | in their name so check for this 
+        # and ask the user to re enter the argument again if the argument contains |
+        while [ $(echo $LastName | grep "|" | wc -l) -gt 0 ]
+        do
+                echo
+                echo "The character'|' is a special character and can not be used in Names"
+                printf "Enter Last Name: "
+                read LastName
+        done
+
 	CheckForExit "$LastName"
 	# while the first name and last name are null
 	# continue to ask for a name as a name is required for lookup during remove contact stage
@@ -99,12 +126,32 @@ case $name in
 	do
 		printf "A Contact NAME is required, enter a NAME (or exit to return to main menu) : "
 		read FirstName
+		# Arguments can't have the dilimeter symbol | in their name so check for this 
+	        # and ask the user to re enter the argument again if the argument contains |
+        	while [ $(echo $FirstName | grep "|" | wc -l) -gt 0 ]
+        	do
+                	echo
+                	echo "The character'|' is a special character and can not be used in Names"
+                	printf "Enter Contact Name: "
+                	read FirstName
+        	done
+
 	done
 	CheckForExit "$FirstName"
   	Name="$FirstName $LastName"
 	echo
   	printf "Enter Address: " 
   	read Address
+	# Arguments can't have the dilimeter symbol | in their name so check for this 
+        # and ask the user to re enter the argument again if the argument contains |
+        while [ $(echo $Address | grep "|" | wc -l) -gt 0 ]
+        do
+                echo
+                echo "The character'|' is a special character and can not be used in Addresses"
+                printf "Enter Address: "
+                read Address
+        done
+
 	CheckForExit "$Address"
 	echo
   	printf "Enter Contact Phone Number: "
